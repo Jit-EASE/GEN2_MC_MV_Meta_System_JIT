@@ -2,11 +2,18 @@ import os
 import time
 from datetime import datetime
 
+
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+
+# Optional OpenAI import for agentic interpretation layer
+try:
+    import openai
+except ImportError:
+    openai = None
 
 # ---------------------------------------------------------
 # PAGE CONFIG
@@ -416,18 +423,18 @@ tab_engines, tab_indicators, tab_governance = st.tabs(
 # TAB 1 — POLICY ENGINES DASHBOARD
 # =========================================================
 with tab_engines:
-    st.subheader("Self‑Learning Policy Engines — Irish Agri-Food System")
+    st.subheader("🧠 Self‑Learning Policy Engines — Agri‑Food Context")
 
     col1, col2 = st.columns(2)
 
     # ---------------- GEN‑1: BAMSE ----------------
     with col1:
-        st.markdown("### Baseline Agri‑Market Stability Engine (BAMSE)")
+        st.markdown("### GEN‑1 Baseline Agri‑Market Stability Engine (BAMSE)")
         iterations_g1 = st.slider(
             "Iterations (GEN‑1)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen1"
         )
 
-        if st.button("Run (BAMSE)"):
+        if st.button("Run GEN‑1 (BAMSE)"):
             start = time.time()
             adj_p, adj_shock = apply_scenario(0.52, 0.05)
             exp_val, shock_freq = mc_markov_python(iterations_g1, adj_p, adj_shock)
@@ -454,13 +461,13 @@ with tab_engines:
     # ---------------- GEN‑2: RASVRE ----------------
     with col2:
         st.markdown(
-            "### Rapid Agri‑Shock Vectorized Response Engine (RASVRE)"
+            "### GEN‑2 Rapid Agri‑Shock Vectorized Response Engine (RASVRE)"
         )
         iterations_g2 = st.slider(
             "Iterations (GEN‑2)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen2"
         )
 
-        if st.button("Run (RASVRE)"):
+        if st.button("Run GEN‑2 (RASVRE)"):
             start = time.time()
             adj_p, adj_shock = apply_scenario(0.52, 0.05)
             exp_val, shock_freq = mc_markov_vectorized(iterations_g2, adj_p, adj_shock)
@@ -493,12 +500,12 @@ with tab_engines:
     st.markdown("---")
 
     # ---------------- GEN‑3: AF‑STEM ----------------
-    st.markdown("### Adaptive Farm‑Sector State Transition Model (AF‑STEM)")
+    st.markdown("### GEN‑3 Adaptive Farm‑Sector State Transition Model (AF‑STEM)")
     iterations_g3 = st.slider(
         "Iterations (GEN‑3)", 50_000, 500_000, 150_000, step=50_000, key="iter_gen3"
     )
 
-    if st.button("Run (AF‑STEM)"):
+    if st.button("Run GEN‑3 (AF‑STEM)"):
         start = time.time()
         exp_val, shock_freq = mc_markov_adaptive(iterations_g3)
         end = time.time()
@@ -525,13 +532,13 @@ with tab_engines:
 
     # ---------------- GEN‑5: MAFPIS ----------------
     st.markdown(
-        "### Multi‑Agent Farm‑Processor Interaction Simulator (MAFPIS)"
+        "### GEN‑5 Multi‑Agent Farm‑Processor Interaction Simulator (MAFPIS)"
     )
     iterations_g5 = st.slider(
         "Iterations (GEN‑5)", 20_000, 200_000, 50_000, step=20_000, key="iter_gen5"
     )
 
-    if st.button("Run (MAFPIS)"):
+    if st.button("Run GEN‑5 (MAFPIS)"):
         start = time.time()
         exp_val, shock_freq = mc_multi_agent(iterations_g5)
         end = time.time()
@@ -558,13 +565,13 @@ with tab_engines:
 
     # ---------------- GEN‑6: RPO‑Agri ----------------
     st.markdown(
-        "### Reinforcement Policy Optimiser for Agri‑Food (RPO‑Agri)"
+        "### GEN‑6 Reinforcement Policy Optimiser for Agri‑Food (RPO‑Agri)"
     )
     iterations_g6 = st.slider(
         "Iterations (GEN‑6)", 10_000, 100_000, 30_000, step=10_000, key="iter_gen6"
     )
 
-    if st.button("Run (RPO‑Agri)"):
+    if st.button("Run GEN‑6 (RPO‑Agri)"):
         start = time.time()
         exp_val, shock_freq = q_learning_policy(iterations_g6)
         end = time.time()
@@ -592,7 +599,7 @@ with tab_engines:
 # TAB 2 — INDICATORS & PLOTLY VISUALS
 # =========================================================
 with tab_indicators:
-    st.subheader("Engine Performance & Shock Indicators")
+    st.subheader("📈 Engine Performance & Shock Indicators")
 
     history = st.session_state["run_history"]
     if not history:
@@ -694,7 +701,7 @@ with tab_indicators:
 # TAB 3 — GOVERNANCE & AUDITOR
 # =========================================================
 with tab_governance:
-    st.subheader("Governance, Risk & Self‑Auditor Panel")
+    st.subheader("🛡️ Governance, Risk & Self‑Auditor Panel")
 
     # Choose latest run across all engines
     latest_run = None
@@ -722,7 +729,7 @@ with tab_governance:
         # AGENTIC OPENAI POLICY INTERPRETATION LAYER
         # ---------------------------------------------------------
         st.markdown("---")
-        st.subheader("Agentic Policy Intelligence Advisor")
+        st.subheader("🤖 Agentic Policy Intelligence Advisor")
 
         agentic_narrative = generate_policy_narrative(
             latest_run,
@@ -742,7 +749,7 @@ with tab_governance:
         st.write(agentic_narrative)
 
     st.markdown("---")
-    st.subheader("Active Scenario Metadata")
+    st.subheader("📑 Active Scenario Metadata")
     st.write(f"**Active Scenario:** {scenario}")
     st.write(
         "Scenario parameters are integrated into BAMSE and RASVRE engines "
