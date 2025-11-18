@@ -67,9 +67,16 @@ def mc_markov_vectorized(n_iter: int, p_up: float = 0.52, shock_prob: float = 0.
     # Apply shock multiplier where shock occurs
     factors = np.where(shocks, factors * 0.80, factors)
 
-    # Overall value is the product of all factors
-    # For large n, this may underflow towards 0 — that's acceptable for demo.
-    value = float(np.prod(factors))
+    # ----- NEW numerically stable log-sum-product engine -----
+    # Compute log factors to avoid underflow
+    log_factors = np.log(factors)
+
+    # Sum logs instead of multiplying tiny numbers
+    log_value = np.sum(log_factors)
+
+    # Convert back from log-space
+    value = float(np.exp(log_value))
+
     shock_freq = float(shocks.mean())
 
     return value, shock_freq
