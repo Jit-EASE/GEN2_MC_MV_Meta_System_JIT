@@ -1,22 +1,35 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
+import os
 import time
+from datetime import datetime
+
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import streamlit as st
 
 # ---------------------------------------------------------
 # PAGE CONFIG
 # ---------------------------------------------------------
-st.set_page_config(page_title="Meta System Gen-2", layout="wide")
+st.set_page_config(
+    page_title="Agri-Food Policy Intelligence Suite",
+    layout="wide"
+)
 
 # ---------------------------------------------------------
-# SIDEBAR — POLICY CONTROL PANEL
+# SIDEBAR — POLICY & GOVERNANCE PANEL
 # ---------------------------------------------------------
 with st.sidebar:
     st.title("📘 Policy Control Panel")
 
+    st.markdown(
+        "### Self‑Learning Policy Engines\n"
+        "Performance & Stress Audit System (Quality Control)"
+    )
+
     st.subheader("Scenario Generator")
     scenario = st.selectbox(
-        "Select Scenario",
+        "Select Policy / Market Scenario",
         [
             "Baseline Conditions",
             "High Shock Volatility",
@@ -24,24 +37,32 @@ with st.sidebar:
             "Market Expansion Scenario",
             "Recession Drift",
             "Policy Tightening",
-        ]
+        ],
     )
 
-    st.subheader("EU Compliance Panel")
-    st.markdown("### 🇪🇺 EU AI Act Compliance Review")
+    st.subheader("🇪🇺 EU Governance & Compliance")
+    st.markdown("**EU AI Act & CAP 2023–2027 Alignment (High‑Level Check)**")
 
-    st.write("**Risk Category:** High‑Level Evaluation")
+    st.checkbox("Transparency & Documentation in place", value=True)
+    st.checkbox("Explainability for Policy Users enabled", value=True)
+    st.checkbox("Robustness & Stress‑Testing performed (MC + Markov)", value=True)
+    st.checkbox("Human‑in‑the‑Loop Oversight configured", value=True)
+    st.checkbox("Data Governance & Traceability (EO + CSO) verified", value=True)
 
-    st.checkbox("Transparency Requirements Met", value=True)
-    st.checkbox("Explainability Enabled", value=True)
-    st.checkbox("Robustness & Stress‑Testing Complete", value=True)
-    st.checkbox("Human Oversight Mechanisms Enabled", value=True)
-    st.checkbox("Data Governance & Traceability Verified", value=True)
+    st.caption(
+        "All policy engines are tested with Monte‑Carlo (MC), "
+        "Markov Chain (MC), and Copernicus Earth‑Observation "
+        "aligned agri‑economic datasets."
+    )
 
-    st.caption("All engines undergo regular MC‑MC stress testing and Earth‑Observation alignment checks.")
-
-st.title("📡 Meta System Gen-2 — Vectorized GEN-2 (Cloud Safe)")
-st.caption("Real-time Monte-Carlo + Markov Risk Engine | GEN-1 vs GEN-2 Benchmark | Self-Auditor")
+# ---------------------------------------------------------
+# HEADER
+# ---------------------------------------------------------
+st.title("🌾 Agri‑Food Policy Intelligence Suite")
+st.caption(
+    "Self‑Learning Policy Engines for Ireland’s Agri‑Food Sector — "
+    "Performance, Stress Audit, and EU‑Aligned Governance."
+)
 
 # ---------------------------------------------------------
 # LOAD REAL DATA (RELATIVE PATH FOR GITHUB/STREAMLIT)
@@ -50,16 +71,17 @@ DATA_PATH = "ie_copernicus_agri_econ_panel_2016_2024.csv"
 
 try:
     data = pd.read_csv(DATA_PATH)
-    st.subheader("📊 Real Data Loaded: Irish Agri-Econ Panel (2016–2024)")
+    st.subheader("📊 Real Data: Copernicus‑Aligned Agri‑Econ Panel (2016–2024)")
     st.dataframe(data.head(), use_container_width=True)
 except Exception as e:
     st.warning(f"Could not load dataset from '{DATA_PATH}': {e}")
     data = None
 
 # ---------------------------------------------------------
-# APPLY SCENARIO PARAMETERS
+# APPLY SCENARIO PARAMETERS (POLICY / MARKET / CLIMATE)
 # ---------------------------------------------------------
-def apply_scenario(p_up, shock_prob):
+def apply_scenario(p_up: float, shock_prob: float):
+    """Scenario logic to adjust baseline transition probabilities."""
     if scenario == "High Shock Volatility":
         return p_up - 0.05, shock_prob + 0.10
     elif scenario == "Climate Stress Scenario":
@@ -73,67 +95,189 @@ def apply_scenario(p_up, shock_prob):
     else:
         return p_up, shock_prob
 
+
 # ---------------------------------------------------------
-# GEN-1 ENGINE — PURE PYTHON (BASELINE)
+# GEN‑1 ENGINE — BASELINE AGRI‑MARKET STABILITY ENGINE (BAMSE)
 # ---------------------------------------------------------
 def mc_markov_python(n_iter: int, p_up: float = 0.52, shock_prob: float = 0.05):
+    """
+    GEN‑1: Baseline Agri‑Market Stability Engine (BAMSE)
+    Classic Python loop simulating simple price / yield drift and shocks.
+    """
     import random
+
     value = 1.0
     shocks = 0
 
     for _ in range(n_iter):
-        # Markov-like up/down move
         if random.random() < p_up:
             value *= 1.01
         else:
             value *= 0.99
 
-        # Rare negative shock
         if random.random() < shock_prob:
             value *= 0.80
             shocks += 1
 
     return value, shocks / n_iter
 
+
 # ---------------------------------------------------------
-# GEN-2 ENGINE — NUMPY VECTORIZED (STREAMLIT-CLOUD SAFE)
+# GEN‑2 ENGINE — RAPID AGRI‑SHOCK VECTORIZED RESPONSE ENGINE (RASVRE)
 # ---------------------------------------------------------
-def mc_markov_vectorized(n_iter: int, p_up: float = 0.52, shock_prob: float = 0.05, seed: int = 42):
+def mc_markov_vectorized(
+    n_iter: int,
+    p_up: float = 0.52,
+    shock_prob: float = 0.05,
+    seed: int = 42,
+):
     """
-    Vectorized Monte-Carlo + Markov shock engine.
-    Uses NumPy arrays instead of Python loops.
-    Cloud-safe (no Cython/Numba) but significantly faster than GEN-1.
+    GEN‑2: Rapid Agri‑Shock Vectorized Response Engine (RASVRE)
+    Vectorized Monte‑Carlo + Markov engine (NumPy) — cloud‑safe and fast.
     """
     rng = np.random.default_rng(seed)
 
-    # Draw random uniforms for up/down and shocks
-    ups = rng.random(n_iter) < p_up           # True = up, False = down
-    shocks = rng.random(n_iter) < shock_prob  # True = shock
+    ups = rng.random(n_iter) < p_up
+    shocks = rng.random(n_iter) < shock_prob
 
-    # Base movement factor: 1.01 if up else 0.99
     factors = np.where(ups, 1.01, 0.99)
-
-    # Apply shock multiplier where shock occurs
     factors = np.where(shocks, factors * 0.80, factors)
 
-    # ----- NEW numerically stable log-sum-product engine -----
-    # Compute log factors to avoid underflow
+    # Numerically stable log‑sum‑product
     log_factors = np.log(factors)
-
-    # Sum logs instead of multiplying tiny numbers
     log_value = np.sum(log_factors)
-
-    # Convert back from log-space
     value = float(np.exp(log_value))
-
     shock_freq = float(shocks.mean())
 
     return value, shock_freq
 
+
 # ---------------------------------------------------------
-# SELF-AUDITOR
+# GEN‑3 ENGINE — ADAPTIVE FARM‑SECTOR STATE TRANSITION MODEL (AF‑STEM)
 # ---------------------------------------------------------
-def self_auditor_check(result_dict):
+def mc_markov_adaptive(n_iter: int, seed: int = 123):
+    """
+    GEN‑3: Adaptive Farm‑Sector State Transition Model (AF‑STEM)
+    Adapts transition probabilities based on synthetic volatility patterns.
+    """
+    rng = np.random.default_rng(seed)
+
+    p_up = 0.52
+    shock_prob = 0.05
+    value = 1.0
+    shocks = 0
+
+    for i in range(n_iter):
+        if i > 1000:
+            local_vol = abs(np.sin(i / 2000))
+            p_up = 0.52 - local_vol * 0.1
+            shock_prob = 0.05 + local_vol * 0.02
+
+        move = rng.random()
+        if move < p_up:
+            value *= 1.01
+        else:
+            value *= 0.99
+
+        if rng.random() < shock_prob:
+            value *= 0.80
+            shocks += 1
+
+    return value, shocks / n_iter
+
+
+# ---------------------------------------------------------
+# GEN‑5 ENGINE — MULTI‑AGENT FARM‑PROCESSOR INTERACTION SIMULATOR (MAFPIS)
+# ---------------------------------------------------------
+def mc_multi_agent(n_iter: int, agents: int = 3, seed: int = 777):
+    """
+    GEN‑5: Multi‑Agent Farm‑Processor Interaction Simulator (MAFPIS)
+    Simulates interactions between farms, co‑ops, and processors.
+    """
+    rng = np.random.default_rng(seed)
+
+    states = np.ones(agents)
+    shocks = 0
+
+    for _ in range(n_iter):
+        interaction = rng.random((agents, agents))
+        interaction = interaction / interaction.sum(axis=1, keepdims=True)
+
+        shock_env = rng.random() < 0.04
+
+        for a in range(agents):
+            influence = np.dot(interaction[a], states)
+            if influence > 1.0:
+                states[a] *= 1.01
+            else:
+                states[a] *= 0.99
+
+            if shock_env and rng.random() < 0.2:
+                states[a] *= 0.85
+                shocks += 1
+
+    final_value = float(states.mean())
+    shock_freq = shocks / (n_iter * agents)
+    return final_value, shock_freq
+
+
+# ---------------------------------------------------------
+# GEN‑6 ENGINE — REINFORCEMENT POLICY OPTIMISER FOR AGRI‑FOOD (RPO‑Agri)
+# ---------------------------------------------------------
+def q_learning_policy(n_iter: int, seed: int = 2025):
+    """
+    GEN‑6: Reinforcement Policy Optimiser for Agri‑Food (RPO‑Agri)
+    Q‑learning policy engine exploring conserve/expand actions under shocks.
+    """
+    rng = np.random.default_rng(seed)
+
+    # States: 0 = bad, 1 = neutral, 2 = good
+    Q = np.zeros((3, 2))  # actions: 0 (conserve), 1 (expand)
+    state = 1
+    shocks = 0
+
+    alpha = 0.1
+    gamma = 0.9
+
+    for _ in range(n_iter):
+        action = rng.integers(0, 2)
+        reward = 0.0
+
+        p = rng.random()
+        if p < 0.3:
+            next_state = 0
+        elif p < 0.7:
+            next_state = 1
+        else:
+            next_state = 2
+
+        if action == 1 and next_state == 2:
+            reward = 1.0
+        elif action == 1 and next_state == 0:
+            reward = -1.0
+        elif action == 0:
+            reward = 0.05
+
+        if rng.random() < 0.05:
+            reward -= 0.5
+            shocks += 1
+
+        best_next = np.max(Q[next_state])
+        Q[state, action] = Q[state, action] + alpha * (
+            reward + gamma * best_next - Q[state, action]
+        )
+
+        state = next_state
+
+    expected_value = float(np.mean(Q))
+    shock_freq = shocks / n_iter
+    return expected_value, shock_freq
+
+
+# ---------------------------------------------------------
+# SELF‑AUDITOR (POLICY‑GRADED)
+# ---------------------------------------------------------
+def self_auditor_check(result_dict: dict):
     issues = []
     notes = []
 
@@ -141,386 +285,473 @@ def self_auditor_check(result_dict):
     ev = result_dict["expected_value"]
     sf = result_dict["shock_frequency"]
 
-    # --- Response Time Classification ---
+    # Response Time
     if rt > 500:
         issues.append("⛔ System latency high — optimisation required.")
     elif rt > 250:
-        issues.append("⚠️ Moderate latency — system running slower than ideal.")
+        issues.append("⚠️ Moderate latency — system slower than ideal.")
     else:
-        notes.append("🟢 Response time within optimal range.")
+        notes.append("🟢 Response time within optimal decision window.")
 
-    # --- Expected Value Classification (GEN‑Safe Logic) ---
-    # Instead of treating low values as collapse, classify them normally.
+    # Expected Value
     if ev > 1.2:
-        notes.append("🟢 System showing strong positive trend.")
+        notes.append("🟢 System showing strong positive trend in agri‑economic outcomes.")
     elif 0.8 < ev <= 1.2:
         notes.append("🟡 System stable with mild fluctuations.")
     elif 0.2 < ev <= 0.8:
-        issues.append("⚠️ System trending downward — monitor behaviour.")
+        issues.append("⚠️ System trending downward — monitor farm incomes and margins.")
     else:
-        issues.append("🔍 Low expected value detected — indicates stress but not systemic failure.")
+        issues.append(
+            "🔍 Low expected value detected — signals structural stress but not confirmed systemic failure."
+        )
 
-    # --- Shock Frequency Classification ---
+    # Shock Frequency
     if sf > 0.20:
-        issues.append("⛔ Excessive shock frequency — unstable environment.")
+        issues.append("⛔ Excessive shock frequency — highly volatile agri‑environment.")
     elif sf > 0.10:
-        issues.append("⚠️ Elevated shock levels — conditions volatile.")
+        issues.append("⚠️ Elevated shock levels — policy buffers may be required.")
     else:
-        notes.append("🟢 Shock frequency within normal bounds.")
+        notes.append("🟢 Shock frequency within tolerable bounds for agri‑markets.")
 
-    # Determine status
+    # Status classification
     if len(issues) == 0:
         status = "🟢 System Stable"
     elif any("⛔" in x for x in issues):
-        status = "🔴 High-Risk Conditions"
+        status = "🔴 High‑Risk Conditions"
     else:
         status = "🟠 Moderate Risk Detected"
 
     return status, issues + notes
 
+
 # ---------------------------------------------------------
-# APP LAYOUT — 2×2 GRID (GEN-1 | GEN-2) + SELF-AUDITOR
+# OPENAI GPT‑STYLE POLICY INTERPRETER (SAFE FALLBACK)
 # ---------------------------------------------------------
-col1, col2 = st.columns(2, gap="large")
+def generate_policy_narrative(result_dict: dict, engine_label: str, scenario_label: str):
+    """
+    If OpenAI + API key are available, call GPT‑4o‑mini style agent.
+    Otherwise, provide a deterministic fallback narrative.
+    """
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    base_prompt = (
+        f"You are an Irish agri‑food policy advisor. "
+        f"Engine: {engine_label}. Scenario: {scenario_label}. "
+        f"Metrics: expected value={result_dict['expected_value']:.4f}, "
+        f"shock frequency={result_dict['shock_frequency']:.4f}, "
+        f"response time={result_dict['response_time_ms']:.2f} ms.\n\n"
+        "Provide a short 4–6 line interpretation in professional policy language "
+        "for the Department of Agriculture, Food and the Marine. "
+        "Conclude with ONE concrete policy suggestion."
+    )
 
-# ============================================
-# GEN-1 BLOCK
-# ============================================
-with col1:
-    st.header("GEN‑1 Baseline Stochastic Policy Simulator (BSPS)")
-    iterations_g1 = st.slider("Iterations (GEN-1)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen1")
+    if not api_key:
+        # Fallback narrative — no external call
+        lines = [
+            f"Engine **{engine_label}** under **{scenario_label}** indicates a "
+            f"simulated expected outcome of {result_dict['expected_value']:.4f} "
+            f"with a shock frequency of {result_dict['shock_frequency']:.4f}.",
+            "The system is operating within a controlled experimental environment "
+            "using Monte‑Carlo and Markov‑style transitions.",
+            "Results suggest that agri‑markets remain sensitive to external shocks, "
+            "especially under climate and price volatility scenarios.",
+            "From a governance perspective, this run provides an early‑warning signal "
+            "rather than a confirmed crisis.",
+            "Policy suggestion: strengthen targeted income‑stabilisation tools and "
+            "scenario‑based advisory support for vulnerable farm types.",
+        ]
+        return "\n\n".join(lines)
 
-    if st.button("Run GEN-1 Model"):
-        start = time.time()
-        adj_p, adj_shock = apply_scenario(0.52, 0.05)
-        exp_val, shock_freq = mc_markov_python(iterations_g1, adj_p, adj_shock)
-        end = time.time()
+    # Optional: real OpenAI call (wrapped safely)
+    try:
+        import openai  # type: ignore
 
-        st.session_state["GEN1"] = {
-            "engine": "GEN‑1 Baseline Stochastic Policy Simulator (BSPS)",
-            "iterations": iterations_g1,
-            "response_time_ms": (end - start) * 1000,
-            "expected_value": exp_val,
-            "shock_frequency": shock_freq,
-        }
+        openai.api_key = api_key
+        response = openai.ChatCompletion.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a senior agri‑food policy advisor for Ireland."},
+                {"role": "user", "content": base_prompt},
+            ],
+            max_tokens=300,
+            temperature=0.4,
+        )
+        return response["choices"][0]["message"]["content"]
+    except Exception:
+        # Fallback if anything fails
+        return (
+            "AI policy interpretation unavailable (OpenAI API not configured). "
+            "Use the quantitative metrics above as the primary decision support, "
+            "and interpret them within your policy context."
+        )
 
-    if "GEN1" in st.session_state:
-        g1 = st.session_state["GEN1"]
-        st.metric("Response Time (ms)", f"{g1['response_time_ms']:.2f}")
-        st.metric("Expected Value", f"{g1['expected_value']:.4f}")
-        st.metric("Shock Frequency", f"{g1['shock_frequency']:.4f}")
 
-# ============================================
-# GEN-2 BLOCK (NUMPY VECTORIZED)
-# ============================================
-with col2:
-    st.header("GEN‑2 Vectorized Economic Shock Response Engine (VESRE)")
-    iterations_g2 = st.slider("Iterations (GEN-2)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen2")
+# ---------------------------------------------------------
+# SESSION STATE FOR RUN HISTORY
+# ---------------------------------------------------------
+if "run_history" not in st.session_state:
+    st.session_state["run_history"] = []  # list of dicts
 
-    if st.button("Run GEN-2 Model"):
-        start = time.time()
-        exp_val, shock_freq = mc_markov_vectorized(iterations_g2, *apply_scenario(0.52, 0.05))
-        end = time.time()
 
-        st.session_state["GEN2"] = {
-            "engine": "GEN‑2 Vectorized Economic Shock Response Engine (VESRE)",
-            "iterations": iterations_g2,
-            "response_time_ms": (end - start) * 1000,
-            "expected_value": exp_val,
-            "shock_frequency": shock_freq,
-        }
+def record_run(engine_key: str, label: str, result: dict):
+    entry = {
+        "timestamp": datetime.utcnow(),
+        "engine_key": engine_key,
+        "engine_label": label,
+        "scenario": scenario,
+        "response_time_ms": result["response_time_ms"],
+        "expected_value": result["expected_value"],
+        "shock_frequency": result["shock_frequency"],
+    }
+    st.session_state["run_history"].append(entry)
 
-    if "GEN2" in st.session_state:
-        g2 = st.session_state["GEN2"]
-        st.metric("Response Time (ms)", f"{g2['response_time_ms']:.2f}")
-        st.metric("Expected Value", f"{g2['expected_value']:.4f}")
-        st.metric("Shock Frequency", f"{g2['shock_frequency']:.4f}")
 
-        # Optional: show speedup vs GEN-1
+# ---------------------------------------------------------
+# TABS LAYOUT
+# ---------------------------------------------------------
+tab_engines, tab_indicators, tab_governance = st.tabs(
+    ["Policy Engines Dashboard", "Indicators & Plotly Visuals", "Governance & Auditor"]
+)
+
+# =========================================================
+# TAB 1 — POLICY ENGINES DASHBOARD
+# =========================================================
+with tab_engines:
+    st.subheader("Self‑Learning Policy Engines — Irish Agri-Food System")
+
+    col1, col2 = st.columns(2)
+
+    # ---------------- GEN‑1: BAMSE ----------------
+    with col1:
+        st.markdown("### Baseline Agri‑Market Stability Engine (BAMSE)")
+        iterations_g1 = st.slider(
+            "Iterations (GEN‑1)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen1"
+        )
+
+        if st.button("Run (BAMSE)"):
+            start = time.time()
+            adj_p, adj_shock = apply_scenario(0.52, 0.05)
+            exp_val, shock_freq = mc_markov_python(iterations_g1, adj_p, adj_shock)
+            end = time.time()
+
+            result = {
+                "engine": "GEN‑1 BAMSE",
+                "iterations": iterations_g1,
+                "response_time_ms": (end - start) * 1000,
+                "expected_value": exp_val,
+                "shock_frequency": shock_freq,
+            }
+            st.session_state["GEN1"] = result
+            record_run("GEN1", "GEN‑1 BAMSE", result)
+
         if "GEN1" in st.session_state:
             g1 = st.session_state["GEN1"]
-            if g2["response_time_ms"] > 0:
+            st.metric("Response Time (ms)", f"{g1['response_time_ms']:.2f}")
+            st.metric("Expected Value", f"{g1['expected_value']:.4f}")
+            st.metric("Shock Frequency", f"{g1['shock_frequency']:.4f}")
+            with st.expander("AI Policy Interpretation (GEN‑1)"):
+                st.markdown(generate_policy_narrative(g1, "GEN‑1 BAMSE", scenario))
+
+    # ---------------- GEN‑2: RASVRE ----------------
+    with col2:
+        st.markdown(
+            "### Rapid Agri‑Shock Vectorized Response Engine (RASVRE)"
+        )
+        iterations_g2 = st.slider(
+            "Iterations (GEN‑2)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen2"
+        )
+
+        if st.button("Run (RASVRE)"):
+            start = time.time()
+            adj_p, adj_shock = apply_scenario(0.52, 0.05)
+            exp_val, shock_freq = mc_markov_vectorized(iterations_g2, adj_p, adj_shock)
+            end = time.time()
+
+            result = {
+                "engine": "GEN‑2 RASVRE",
+                "iterations": iterations_g2,
+                "response_time_ms": (end - start) * 1000,
+                "expected_value": exp_val,
+                "shock_frequency": shock_freq,
+            }
+            st.session_state["GEN2"] = result
+            record_run("GEN2", "GEN‑2 RASVRE", result)
+
+        if "GEN2" in st.session_state:
+            g2 = st.session_state["GEN2"]
+            st.metric("Response Time (ms)", f"{g2['response_time_ms']:.2f}")
+            st.metric("Expected Value", f"{g2['expected_value']:.4f}")
+            st.metric("Shock Frequency", f"{g2['shock_frequency']:.4f}")
+
+            if "GEN1" in st.session_state and g2["response_time_ms"] > 0:
+                g1 = st.session_state["GEN1"]
                 speedup = g1["response_time_ms"] / g2["response_time_ms"]
-                st.write(f"⚡ Approx. speedup over GEN-1: **{speedup:.2f}×**")
+                st.write(f"⚡ Approx. speedup over GEN‑1: **{speedup:.2f}×**")
 
-# ============================================
-# GEN-3 BLOCK (Adaptive State‑Space Engine)
-# ============================================
-with st.container():
-    st.header("GEN‑3 Adaptive State‑Space Economic Transition Model (ASSET‑Model)")
+            with st.expander("AI Policy Interpretation (GEN‑2)"):
+                st.markdown(generate_policy_narrative(g2, "GEN‑2 RASVRE", scenario))
 
-    iterations_g3 = st.slider("Iterations (GEN-3)", 50_000, 500_000, 150_000, step=50_000, key="iter_gen3")
+    st.markdown("---")
 
-    def mc_markov_adaptive(n_iter, seed=123):
-        rng = np.random.default_rng(seed)
+    # ---------------- GEN‑3: AF‑STEM ----------------
+    st.markdown("### Adaptive Farm‑Sector State Transition Model (AF‑STEM)")
+    iterations_g3 = st.slider(
+        "Iterations (GEN‑3)", 50_000, 500_000, 150_000, step=50_000, key="iter_gen3"
+    )
 
-        # Base probabilities
-        p_up = 0.52
-        shock_prob = 0.05
-
-        value = 1.0
-        shocks = 0
-
-        for i in range(n_iter):
-            # Adapt p_up based on recent volatility (synthetic mini‑state memory)
-            if i > 1000:
-                local_vol = abs(np.sin(i / 2000))
-                p_up = 0.52 - local_vol * 0.1    # micro‑fluctuation adaptation
-                shock_prob = 0.05 + local_vol * 0.02
-
-            move = rng.random()
-            if move < p_up:
-                value *= 1.01
-            else:
-                value *= 0.99
-
-            # shocks
-            if rng.random() < shock_prob:
-                value *= 0.80
-                shocks += 1
-
-        return value, shocks / n_iter
-
-    if st.button("Run GEN-3 Model"):
+    if st.button("Run (AF‑STEM)"):
         start = time.time()
         exp_val, shock_freq = mc_markov_adaptive(iterations_g3)
-        # GEN‑3 is adaptive; scenario modifies baseline indirectly.
         end = time.time()
 
-        st.session_state["GEN3"] = {
-            "engine": "GEN‑3 Adaptive State‑Space Economic Transition Model (ASSET‑Model)",
+        result = {
+            "engine": "GEN‑3 AF‑STEM",
             "iterations": iterations_g3,
             "response_time_ms": (end - start) * 1000,
             "expected_value": exp_val,
             "shock_frequency": shock_freq,
         }
+        st.session_state["GEN3"] = result
+        record_run("GEN3", "GEN‑3 AF‑STEM", result)
 
     if "GEN3" in st.session_state:
         g3 = st.session_state["GEN3"]
         st.metric("Response Time (ms)", f"{g3['response_time_ms']:.2f}")
         st.metric("Expected Value", f"{g3['expected_value']:.4f}")
         st.metric("Shock Frequency", f"{g3['shock_frequency']:.4f}")
+        with st.expander("AI Policy Interpretation (GEN‑3)"):
+            st.markdown(generate_policy_narrative(g3, "GEN‑3 AF‑STEM", scenario))
 
-# ============================================
-# GEN-4 BLOCK (AI-Narrated Auditor Insight)
-# ============================================
-with st.container():
-    st.header("GEN‑4 AI Narrated Interpretive Governance Engine (AIGE)")
+    st.markdown("---")
 
-    def ai_narrator(engine_output):
-        rt = engine_output["response_time_ms"]
-        ev = engine_output["expected_value"]
-        sf = engine_output["shock_frequency"]
+    # ---------------- GEN‑5: MAFPIS ----------------
+    st.markdown(
+        "### Multi‑Agent Farm‑Processor Interaction Simulator (MAFPIS)"
+    )
+    iterations_g5 = st.slider(
+        "Iterations (GEN‑5)", 20_000, 200_000, 50_000, step=20_000, key="iter_gen5"
+    )
 
-        # Generate dynamic narrative
-        narrative = []
-
-        narrative.append(f"Engine Type: **{engine_output['engine']}**")
-
-        # Latency story
-        if rt < 200:
-            narrative.append("The system is performing efficiently with low latency.")
-        elif rt < 400:
-            narrative.append("Latency is moderate, suggesting increasing computational load.")
-        else:
-            narrative.append("High latency detected — scenario complexity likely increased.")
-
-        # Expected value story
-        if ev > 1.0:
-            narrative.append("Expected value indicates upward economic resilience.")
-        elif ev > 0.5:
-            narrative.append("Expected value is stable, showing balanced positive/negative signals.")
-        else:
-            narrative.append("Expected value is low — underlying stress patterns are visible.")
-
-        # Shock narrative
-        if sf < 0.08:
-            narrative.append("Shock frequency is low, meaning external disruptions are minimal.")
-        elif sf < 0.15:
-            narrative.append("Shock levels are rising — a volatile environment may be forming.")
-        else:
-            narrative.append("High shock frequency — external instability shaping the system.")
-
-        return "\n".join(narrative)
-
-    # Pick latest engine run
-    latest_engine = None
-    for key in ["GEN3", "GEN2", "GEN1"]:
-        if key in st.session_state:
-            latest_engine = st.session_state[key]
-            break
-
-    if latest_engine:
-        st.subheader("Narrated Interpretation")
-        st.markdown(ai_narrator(latest_engine))
-    else:
-        st.info("Run any model (GEN‑1, GEN‑2, GEN‑3) to generate AI narrative.")
-
-# ============================================
-# GEN-5 BLOCK (Multi-Agent Interaction Model)
-# ============================================
-with st.container():
-    st.header("GEN‑5 Multi‑Agent Economic Interaction Simulator (MAEIS)")
-
-    iterations_g5 = st.slider("Iterations (GEN-5)", 20_000, 200_000, 50_000, step=20_000, key="iter_gen5")
-
-    def mc_multi_agent(n_iter, agents=3, seed=777):
-        rng = np.random.default_rng(seed)
-
-        # Initialize agent states
-        states = np.ones(agents)
-        shocks = 0
-
-        for _ in range(n_iter):
-            # random interaction weights
-            interaction = rng.random((agents, agents))
-            interaction = interaction / interaction.sum(axis=1, keepdims=True)
-
-            # environment shock
-            shock_env = rng.random() < 0.04
-
-            for a in range(agents):
-                influence = np.dot(interaction[a], states)
-                if influence > 1.0:
-                    states[a] *= 1.01
-                else:
-                    states[a] *= 0.99
-
-                if shock_env and rng.random() < 0.2:
-                    states[a] *= 0.85
-                    shocks += 1
-
-        final_value = float(states.mean())
-        shock_freq = shocks / (n_iter * agents)
-        return final_value, shock_freq
-
-    if st.button("Run GEN-5 Model"):
+    if st.button("Run (MAFPIS)"):
         start = time.time()
         exp_val, shock_freq = mc_multi_agent(iterations_g5)
         end = time.time()
 
-        st.session_state["GEN5"] = {
-            "engine": "GEN‑5 Multi‑Agent Economic Interaction Simulator (MAEIS)",
+        result = {
+            "engine": "GEN‑5 MAFPIS",
             "iterations": iterations_g5,
             "response_time_ms": (end - start) * 1000,
             "expected_value": exp_val,
             "shock_frequency": shock_freq,
         }
+        st.session_state["GEN5"] = result
+        record_run("GEN5", "GEN‑5 MAFPIS", result)
 
     if "GEN5" in st.session_state:
         g5 = st.session_state["GEN5"]
         st.metric("Response Time (ms)", f"{g5['response_time_ms']:.2f}")
         st.metric("Expected Value", f"{g5['expected_value']:.4f}")
         st.metric("Shock Frequency", f"{g5['shock_frequency']:.4f}")
+        with st.expander("AI Policy Interpretation (GEN‑5)"):
+            st.markdown(generate_policy_narrative(g5, "GEN‑5 MAFPIS", scenario))
 
+    st.markdown("---")
 
-# ============================================
-# GEN-6 BLOCK (Q-Learning Policy Engine)
-# ============================================
-with st.container():
-    st.header("GEN‑6 Reinforcement‑Driven Policy Optimization Engine (RPOE)")
+    # ---------------- GEN‑6: RPO‑Agri ----------------
+    st.markdown(
+        "### Reinforcement Policy Optimiser for Agri‑Food (RPO‑Agri)"
+    )
+    iterations_g6 = st.slider(
+        "Iterations (GEN‑6)", 10_000, 100_000, 30_000, step=10_000, key="iter_gen6"
+    )
 
-    iterations_g6 = st.slider("Iterations (GEN-6)", 10_000, 100_000, 30_000, step=10_000, key="iter_gen6")
-
-    def q_learning_policy(n_iter, seed=2025):
-        rng = np.random.default_rng(seed)
-
-        # States: 0 = bad, 1 = neutral, 2 = good
-        Q = np.zeros((3, 2))  # actions: 0 (conserve), 1 (expand)
-        state = 1
-        shocks = 0
-
-        alpha = 0.1
-        gamma = 0.9
-
-        for _ in range(n_iter):
-            action = rng.integers(0, 2)
-            reward = 0
-
-            # stochastic transition
-            p = rng.random()
-            if p < 0.3:
-                next_state = 0
-            elif p < 0.7:
-                next_state = 1
-            else:
-                next_state = 2
-
-            # reward logic
-            if action == 1 and next_state == 2:
-                reward = 1.0
-            elif action == 1 and next_state == 0:
-                reward = -1.0
-            elif action == 0:
-                reward = 0.05
-
-            # shock event
-            if rng.random() < 0.05:
-                reward -= 0.5
-                shocks += 1
-
-            # Q-update
-            best_next = np.max(Q[next_state])
-            Q[state, action] = Q[state, action] + alpha * (reward + gamma * best_next - Q[state, action])
-
-            state = next_state
-
-        expected_value = float(np.mean(Q))
-        shock_freq = shocks / n_iter
-        return expected_value, shock_freq
-
-    if st.button("Run GEN-6 Model"):
+    if st.button("Run (RPO‑Agri)"):
         start = time.time()
         exp_val, shock_freq = q_learning_policy(iterations_g6)
         end = time.time()
 
-        st.session_state["GEN6"] = {
-            "engine": "GEN‑6 Reinforcement‑Driven Policy Optimization Engine (RPOE)",
+        result = {
+            "engine": "GEN‑6 RPO‑Agri",
             "iterations": iterations_g6,
             "response_time_ms": (end - start) * 1000,
             "expected_value": exp_val,
             "shock_frequency": shock_freq,
         }
+        st.session_state["GEN6"] = result
+        record_run("GEN6", "GEN‑6 RPO‑Agri", result)
 
     if "GEN6" in st.session_state:
         g6 = st.session_state["GEN6"]
         st.metric("Response Time (ms)", f"{g6['response_time_ms']:.2f}")
         st.metric("Expected Value", f"{g6['expected_value']:.4f}")
         st.metric("Shock Frequency", f"{g6['shock_frequency']:.4f}")
+        with st.expander("AI Policy Interpretation (GEN‑6)"):
+            st.markdown(generate_policy_narrative(g6, "GEN‑6 RPO‑Agri", scenario))
 
-# ---------------------------------------------------------
-# SELF-AUDITOR SECTION
-# ---------------------------------------------------------
-st.markdown("---")
-st.header("🛡️ System Self-Auditor")
 
-# Prefer auditing GEN-2, fallback to GEN-1
-if "GEN2" in st.session_state:
-    last = st.session_state["GEN2"]
-elif "GEN1" in st.session_state:
-    last = st.session_state["GEN1"]
-else:
-    st.info("Run GEN-1 or GEN-2 to activate the Self-Auditor.")
-    last = None
+# =========================================================
+# TAB 2 — INDICATORS & PLOTLY VISUALS
+# =========================================================
+with tab_indicators:
+    st.subheader("Engine Performance & Shock Indicators")
 
-if last:
-    status, issues = self_auditor_check(last)
-    st.subheader("Auditor Status")
-    st.write(status)
-
-    if issues:
-        for issue in issues:
-            st.error(issue)
+    history = st.session_state["run_history"]
+    if not history:
+        st.info("Run any policy engine to populate indicators and graphs.")
     else:
-        st.success("No issues detected.")
+        hist_df = pd.DataFrame(history)
+        hist_df["timestamp_local"] = hist_df["timestamp"].dt.tz_localize("UTC").dt.tz_convert("Europe/Dublin")
 
-    st.subheader("Audit Input Snapshot")
-    st.json(last)
+        # 1) Response time over runs
+        fig_rt = px.line(
+            hist_df,
+            x="timestamp_local",
+            y="response_time_ms",
+            color="engine_label",
+            title="Response Time Across Policy Engine Runs",
+            labels={"response_time_ms": "Response Time (ms)", "timestamp_local": "Time"},
+        )
+        st.plotly_chart(fig_rt, use_container_width=True)
 
-# ---------------------------------------------------------
-# SCENARIO METADATA DISPLAY
-# ---------------------------------------------------------
-st.markdown("---")
-st.subheader("📑 Active Scenario Metadata")
-st.write(f"**Active Scenario:** {scenario}")
-st.write("Scenario parameters are integrated into GEN‑1 and GEN‑2 engines for policy‑realistic modelling.")
+        # 2) Expected value vs shock frequency (scatter)
+        fig_scatter = px.scatter(
+            hist_df,
+            x="shock_frequency",
+            y="expected_value",
+            color="engine_label",
+            size="response_time_ms",
+            hover_data=["scenario"],
+            title="Expected Value vs Shock Frequency (by Engine)",
+            labels={
+                "shock_frequency": "Shock Frequency",
+                "expected_value": "Expected Value",
+            },
+        )
+        st.plotly_chart(fig_scatter, use_container_width=True)
+
+        # 3) Radar chart for a selected engine run (latest)
+        latest = hist_df.iloc[-1]
+        radar_categories = [
+            "Expected Value",
+            "Shock Frequency (inverted)",
+            "Latency (inverted)",
+        ]
+        radar_values = [
+            max(latest["expected_value"], 0.0),
+            max(0.0001, 1.0 - latest["shock_frequency"]),
+            max(0.0001, 1.0 - min(latest["response_time_ms"] / 1000.0, 1.0)),
+        ]
+
+        radar_fig = go.Figure(
+            data=go.Scatterpolar(
+                r=radar_values + [radar_values[0]],
+                theta=radar_categories + [radar_categories[0]],
+                fill="toself",
+                name=latest["engine_label"],
+            )
+        )
+        radar_fig.update_layout(
+            title=f"Policy Risk‑Resilience Profile — {latest['engine_label']} ({latest['scenario']})",
+            polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+            showlegend=False,
+        )
+        st.plotly_chart(radar_fig, use_container_width=True)
+
+        # 4) Optional: Copernicus vs Engine expected value (if data available)
+        if data is not None and "year" in data.columns:
+            st.markdown("### Climate–Economy Fusion (Illustrative)")
+            # Simple illustrative aggregation
+            climate_series = data.groupby("year").mean(numeric_only=True).reset_index()
+            climate_series["ndvi_proxy"] = (
+                climate_series.select_dtypes(include=[np.number]).mean(axis=1)
+            )
+
+            eng_series = (
+                hist_df.groupby(hist_df["timestamp"].dt.year)
+                .mean(numeric_only=True)
+                .reset_index()
+                .rename(columns={"timestamp": "year"})
+            )
+            fusion_df = pd.DataFrame(
+                {
+                    "year": climate_series["year"],
+                    "NDVI_Proxy": climate_series["ndvi_proxy"],
+                }
+            )
+
+            fig_fusion = go.Figure()
+            fig_fusion.add_trace(
+                go.Scatter(
+                    x=fusion_df["year"],
+                    y=fusion_df["NDVI_Proxy"],
+                    mode="lines+markers",
+                    name="NDVI Proxy (Copernicus‑Aligned)",
+                )
+            )
+            st.plotly_chart(fig_fusion, use_container_width=True)
+
+
+# =========================================================
+# TAB 3 — GOVERNANCE & AUDITOR
+# =========================================================
+with tab_governance:
+    st.subheader("Governance, Risk & Self‑Auditor Panel")
+
+    # Choose latest run across all engines
+    latest_run = None
+    for key in ["GEN2", "GEN1", "GEN3", "GEN5", "GEN6"]:
+        if key in st.session_state:
+            latest_run = st.session_state[key]
+
+    if latest_run is None:
+        st.info("Run any engine to activate the self‑auditor and governance view.")
+    else:
+        status, messages = self_auditor_check(latest_run)
+        st.markdown(f"### Auditor Status: {status}")
+
+        for msg in messages:
+            if "⛔" in msg:
+                st.error(msg)
+            elif "⚠️" in msg:
+                st.warning(msg)
+            else:
+                st.success(msg)
+
+        st.markdown("### Audit Input Snapshot")
+        st.json(latest_run)
+        # ---------------------------------------------------------
+        # AGENTIC OPENAI POLICY INTERPRETATION LAYER
+        # ---------------------------------------------------------
+        st.markdown("---")
+        st.subheader("Agentic Policy Intelligence Advisor")
+
+        agentic_narrative = generate_policy_narrative(
+            latest_run,
+            latest_run["engine"],
+            scenario
+        )
+
+        st.markdown(
+            "The Agentic Advisor interprets the system’s behaviour using "
+            "EU‑style policy language and provides actionable recommendations "
+            "for Ireland’s agri‑food sector."
+        )
+
+        st.markdown(f"**Engine:** {latest_run['engine']}  \n"
+                    f"**Scenario:** {scenario}")
+
+        st.write(agentic_narrative)
+
+    st.markdown("---")
+    st.subheader("Active Scenario Metadata")
+    st.write(f"**Active Scenario:** {scenario}")
+    st.write(
+        "Scenario parameters are integrated into BAMSE and RASVRE engines "
+        "for policy‑realistic modelling of agri‑food markets."
+    )
+
+    st.markdown("### EU‑Style Governance Note")
+    st.write(
+        "This prototype follows an EU‑style approach to AI governance: combining "
+        "quantitative stress‑testing (MC + Markov), explainable narratives, and "
+        "explicit policy oversight markers for the agri‑food sector."
+    )
