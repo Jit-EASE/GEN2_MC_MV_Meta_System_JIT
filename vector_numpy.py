@@ -86,21 +86,48 @@ def mc_markov_vectorized(n_iter: int, p_up: float = 0.52, shock_prob: float = 0.
 # ---------------------------------------------------------
 def self_auditor_check(result_dict):
     issues = []
+    notes = []
 
-    # Latency rule
-    if result_dict["response_time_ms"] > 300:
-        issues.append("⚠️ High response time — system may be overloaded or under-optimized.")
+    rt = result_dict["response_time_ms"]
+    ev = result_dict["expected_value"]
+    sf = result_dict["shock_frequency"]
 
-    # Risk rule
-    if result_dict["shock_frequency"] > 0.15:
-        issues.append("⚠️ Shock frequency unusually high — check scenario assumptions.")
+    # --- Response Time Classification ---
+    if rt > 500:
+        issues.append("⛔ System latency high — optimisation required.")
+    elif rt > 250:
+        issues.append("⚠️ Moderate latency — system running slower than ideal.")
+    else:
+        notes.append("🟢 Response time within optimal range.")
 
-    # Stability rule
-    if result_dict["expected_value"] < 0.2:
-        issues.append("⚠️ Expected value collapsed — potential systemic failure.")
+    # --- Expected Value Classification (GEN‑Safe Logic) ---
+    # Instead of treating low values as collapse, classify them normally.
+    if ev > 1.2:
+        notes.append("🟢 System showing strong positive trend.")
+    elif 0.8 < ev <= 1.2:
+        notes.append("🟡 System stable with mild fluctuations.")
+    elif 0.2 < ev <= 0.8:
+        issues.append("⚠️ System trending downward — monitor behaviour.")
+    else:
+        issues.append("🔍 Low expected value detected — indicates stress but not systemic failure.")
 
-    status = "🟢 System Stable" if len(issues) == 0 else "🟠 Issues Detected"
-    return status, issues
+    # --- Shock Frequency Classification ---
+    if sf > 0.20:
+        issues.append("⛔ Excessive shock frequency — unstable environment.")
+    elif sf > 0.10:
+        issues.append("⚠️ Elevated shock levels — conditions volatile.")
+    else:
+        notes.append("🟢 Shock frequency within normal bounds.")
+
+    # Determine status
+    if len(issues) == 0:
+        status = "🟢 System Stable"
+    elif any("⛔" in x for x in issues):
+        status = "🔴 High-Risk Conditions"
+    else:
+        status = "🟠 Moderate Risk Detected"
+
+    return status, issues + notes
 
 # ---------------------------------------------------------
 # APP LAYOUT — 2×2 GRID (GEN-1 | GEN-2) + SELF-AUDITOR
