@@ -28,7 +28,7 @@ with st.sidebar:
     )
 
     st.subheader("EU Compliance Panel")
-    st.markdown("### 🇪🇺 EU AI Act Compliance Review")
+    st.markdown("### EU AI Act Compliance Review")
 
     st.write("**Risk Category:** High‑Level Evaluation")
 
@@ -50,7 +50,7 @@ DATA_PATH = "ie_copernicus_agri_econ_panel_2016_2024.csv"
 
 try:
     data = pd.read_csv(DATA_PATH)
-    st.subheader("📊 Real Data Loaded: Irish Agri-Econ Panel (2016–2024)")
+    st.subheader("Official Dataset: Irish Agri-Econ Panel (2016–2024) - Copernicus")
     st.dataframe(data.head(), use_container_width=True)
 except Exception as e:
     st.warning(f"Could not load dataset from '{DATA_PATH}': {e}")
@@ -187,25 +187,25 @@ col1, col2 = st.columns(2, gap="large")
 # GEN-1 BLOCK
 # ============================================
 with col1:
-    st.header("GEN‑1 Baseline Stochastic Policy Simulator (BSPS)")
-    iterations_g1 = st.slider("Iterations (GEN-1)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen1")
+    st.header("Baseline Stochastic Policy Simulator")
+    iterations_g1 = st.slider("Iterations (GEN-1)", 50_000, 500_000, 200_000, step=50_000, key="iter_Baseline")
 
-    if st.button("Run GEN-1 Model"):
+    if st.button("Run Model"):
         start = time.time()
         adj_p, adj_shock = apply_scenario(0.52, 0.05)
         exp_val, shock_freq = mc_markov_python(iterations_g1, adj_p, adj_shock)
         end = time.time()
 
-        st.session_state["GEN1"] = {
-            "engine": "GEN‑1 Baseline Stochastic Policy Simulator (BSPS)",
+        st.session_state["Baseline"] = {
+            "engine": "Baseline Stochastic Policy Simulator",
             "iterations": iterations_g1,
             "response_time_ms": (end - start) * 1000,
             "expected_value": exp_val,
             "shock_frequency": shock_freq,
         }
 
-    if "GEN1" in st.session_state:
-        g1 = st.session_state["GEN1"]
+    if "Baseline" in st.session_state:
+        g1 = st.session_state["Baseline"]
         st.metric("Response Time (ms)", f"{g1['response_time_ms']:.2f}")
         st.metric("Expected Value", f"{g1['expected_value']:.4f}")
         st.metric("Shock Frequency", f"{g1['shock_frequency']:.4f}")
@@ -214,16 +214,16 @@ with col1:
 # GEN-2 BLOCK (NUMPY VECTORIZED)
 # ============================================
 with col2:
-    st.header("GEN‑2 Vectorized Economic Shock Response Engine (VESRE)")
+    st.header("Vectorized Economic Shock Response Engine")
     iterations_g2 = st.slider("Iterations (GEN-2)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen2")
 
-    if st.button("Run GEN-2 Model"):
+    if st.button("Run Model"):
         start = time.time()
         exp_val, shock_freq = mc_markov_vectorized(iterations_g2, *apply_scenario(0.52, 0.05))
         end = time.time()
 
         st.session_state["GEN2"] = {
-            "engine": "GEN‑2 Vectorized Economic Shock Response Engine (VESRE)",
+            "engine": "Vectorized Economic Shock Response Engine",
             "iterations": iterations_g2,
             "response_time_ms": (end - start) * 1000,
             "expected_value": exp_val,
@@ -237,8 +237,8 @@ with col2:
         st.metric("Shock Frequency", f"{g2['shock_frequency']:.4f}")
 
         # Optional: show speedup vs GEN-1
-        if "GEN1" in st.session_state:
-            g1 = st.session_state["GEN1"]
+        if "Baseline" in st.session_state:
+            g1 = st.session_state["Baseline"]
             if g2["response_time_ms"] > 0:
                 speedup = g1["response_time_ms"] / g2["response_time_ms"]
                 st.write(f"⚡ Approx. speedup over GEN-1: **{speedup:.2f}×**")
@@ -247,7 +247,7 @@ with col2:
 # GEN-3 BLOCK (Adaptive State‑Space Engine)
 # ============================================
 with st.container():
-    st.header("GEN‑3 Adaptive State‑Space Economic Transition Model (ASSET‑Model)")
+    st.header("Adaptive State‑Space Economic Transition Model")
 
     iterations_g3 = st.slider("Iterations (GEN-3)", 50_000, 500_000, 150_000, step=50_000, key="iter_gen3")
 
@@ -281,14 +281,14 @@ with st.container():
 
         return value, shocks / n_iter
 
-    if st.button("Run GEN-3 Model"):
+    if st.button("Run Model"):
         start = time.time()
         exp_val, shock_freq = mc_markov_adaptive(iterations_g3)
         # GEN‑3 is adaptive; scenario modifies baseline indirectly.
         end = time.time()
 
         st.session_state["GEN3"] = {
-            "engine": "GEN‑3 Adaptive State‑Space Economic Transition Model (ASSET‑Model)",
+            "engine": "Adaptive State‑Space Economic Transition Model",
             "iterations": iterations_g3,
             "response_time_ms": (end - start) * 1000,
             "expected_value": exp_val,
@@ -305,7 +305,7 @@ with st.container():
 # GEN-4 BLOCK (AI-Narrated Auditor Insight)
 # ============================================
 with st.container():
-    st.header("GEN‑4 AI Narrated Interpretive Governance Engine (AIGE)")
+    st.header("AI Narrated Interpretive Governance Engine")
 
     def ai_narrator(engine_output):
         rt = engine_output["response_time_ms"]
@@ -345,7 +345,7 @@ with st.container():
 
     # Pick latest engine run
     latest_engine = None
-    for key in ["GEN3", "GEN2", "GEN1"]:
+    for key in ["GEN3", "GEN2", "Baseline"]:
         if key in st.session_state:
             latest_engine = st.session_state[key]
             break
@@ -360,7 +360,7 @@ with st.container():
 # GEN-5 BLOCK (Multi-Agent Interaction Model)
 # ============================================
 with st.container():
-    st.header("GEN‑5 Multi‑Agent Economic Interaction Simulator (MAEIS)")
+    st.header("Multi‑Agent Economic Interaction Simulator")
 
     iterations_g5 = st.slider("Iterations (GEN-5)", 20_000, 200_000, 50_000, step=20_000, key="iter_gen5")
 
@@ -418,7 +418,7 @@ with st.container():
 # GEN-6 BLOCK (Q-Learning Policy Engine)
 # ============================================
 with st.container():
-    st.header("GEN‑6 Reinforcement‑Driven Policy Optimization Engine (RPOE)")
+    st.header("Self Driven Policy Optimization Engine")
 
     iterations_g6 = st.slider("Iterations (GEN-6)", 10_000, 100_000, 30_000, step=10_000, key="iter_gen6")
 
@@ -492,13 +492,13 @@ with st.container():
 # SELF-AUDITOR SECTION
 # ---------------------------------------------------------
 st.markdown("---")
-st.header("🛡️ System Self-Auditor")
+st.header("System Self-Auditor")
 
 # Prefer auditing GEN-2, fallback to GEN-1
 if "GEN2" in st.session_state:
     last = st.session_state["GEN2"]
-elif "GEN1" in st.session_state:
-    last = st.session_state["GEN1"]
+elif "Baseline" in st.session_state:
+    last = st.session_state["Baseline"]
 else:
     st.info("Run GEN-1 or GEN-2 to activate the Self-Auditor.")
     last = None
@@ -521,6 +521,6 @@ if last:
 # SCENARIO METADATA DISPLAY
 # ---------------------------------------------------------
 st.markdown("---")
-st.subheader("📑 Active Scenario Metadata")
+st.subheader("Active Scenario Metadata")
 st.write(f"**Active Scenario:** {scenario}")
 st.write("Scenario parameters are integrated into GEN‑1 and GEN‑2 engines for policy‑realistic modelling.")
