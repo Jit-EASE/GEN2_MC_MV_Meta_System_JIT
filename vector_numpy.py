@@ -138,7 +138,7 @@ col1, col2 = st.columns(2, gap="large")
 # GEN-1 BLOCK
 # ============================================
 with col1:
-    st.header("GEN-1 Baseline (Pure Python)")
+    st.header("GEN‑1 Baseline Stochastic Policy Simulator (BSPS)")
     iterations_g1 = st.slider("Iterations (GEN-1)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen1")
 
     if st.button("Run GEN-1 Model"):
@@ -147,7 +147,7 @@ with col1:
         end = time.time()
 
         st.session_state["GEN1"] = {
-            "engine": "GEN-1 (Python Loop)",
+            "engine": "GEN‑1 Baseline Stochastic Policy Simulator (BSPS)",
             "iterations": iterations_g1,
             "response_time_ms": (end - start) * 1000,
             "expected_value": exp_val,
@@ -164,7 +164,7 @@ with col1:
 # GEN-2 BLOCK (NUMPY VECTORIZED)
 # ============================================
 with col2:
-    st.header("GEN-2 Accelerated (NumPy Vectorized)")
+    st.header("GEN‑2 Vectorized Economic Shock Response Engine (VESRE)")
     iterations_g2 = st.slider("Iterations (GEN-2)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen2")
 
     if st.button("Run GEN-2 Model"):
@@ -173,7 +173,7 @@ with col2:
         end = time.time()
 
         st.session_state["GEN2"] = {
-            "engine": "GEN-2 (NumPy Vectorized)",
+            "engine": "GEN‑2 Vectorized Economic Shock Response Engine (VESRE)",
             "iterations": iterations_g2,
             "response_time_ms": (end - start) * 1000,
             "expected_value": exp_val,
@@ -197,7 +197,7 @@ with col2:
 # GEN-3 BLOCK (Adaptive State‑Space Engine)
 # ============================================
 with st.container():
-    st.header("GEN-3 Adaptive State‑Space Model")
+    st.header("GEN‑3 Adaptive State‑Space Economic Transition Model (ASSET‑Model)")
 
     iterations_g3 = st.slider("Iterations (GEN-3)", 50_000, 500_000, 150_000, step=50_000, key="iter_gen3")
 
@@ -237,7 +237,7 @@ with st.container():
         end = time.time()
 
         st.session_state["GEN3"] = {
-            "engine": "GEN-3 (Adaptive State-Space)",
+            "engine": "GEN‑3 Adaptive State‑Space Economic Transition Model (ASSET‑Model)",
             "iterations": iterations_g3,
             "response_time_ms": (end - start) * 1000,
             "expected_value": exp_val,
@@ -254,7 +254,7 @@ with st.container():
 # GEN-4 BLOCK (AI-Narrated Auditor Insight)
 # ============================================
 with st.container():
-    st.header("GEN-4 AI Narrated Insight Engine")
+    st.header("GEN‑4 AI Narrated Interpretive Governance Engine (AIGE)")
 
     def ai_narrator(engine_output):
         rt = engine_output["response_time_ms"]
@@ -309,7 +309,7 @@ with st.container():
 # GEN-5 BLOCK (Multi-Agent Interaction Model)
 # ============================================
 with st.container():
-    st.header("GEN-5 Multi-Agent Interaction Model")
+    st.header("GEN‑5 Multi‑Agent Economic Interaction Simulator (MAEIS)")
 
     iterations_g5 = st.slider("Iterations (GEN-5)", 20_000, 200_000, 50_000, step=20_000, key="iter_gen5")
 
@@ -349,7 +349,7 @@ with st.container():
         end = time.time()
 
         st.session_state["GEN5"] = {
-            "engine": "GEN-5 (Multi-Agent Interaction)",
+            "engine": "GEN‑5 Multi‑Agent Economic Interaction Simulator (MAEIS)",
             "iterations": iterations_g5,
             "response_time_ms": (end - start) * 1000,
             "expected_value": exp_val,
@@ -367,7 +367,7 @@ with st.container():
 # GEN-6 BLOCK (Q-Learning Policy Engine)
 # ============================================
 with st.container():
-    st.header("GEN-6 Q-Learning Policy Engine")
+    st.header("GEN‑6 Reinforcement‑Driven Policy Optimization Engine (RPOE)")
 
     iterations_g6 = st.slider("Iterations (GEN-6)", 10_000, 100_000, 30_000, step=10_000, key="iter_gen6")
 
@@ -424,7 +424,7 @@ with st.container():
         end = time.time()
 
         st.session_state["GEN6"] = {
-            "engine": "GEN-6 (Q-Learning Policy)",
+            "engine": "GEN‑6 Reinforcement‑Driven Policy Optimization Engine (RPOE)",
             "iterations": iterations_g6,
             "response_time_ms": (end - start) * 1000,
             "expected_value": exp_val,
