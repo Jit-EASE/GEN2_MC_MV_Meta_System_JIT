@@ -193,6 +193,250 @@ with col2:
                 speedup = g1["response_time_ms"] / g2["response_time_ms"]
                 st.write(f"⚡ Approx. speedup over GEN-1: **{speedup:.2f}×**")
 
+# ============================================
+# GEN-3 BLOCK (Adaptive State‑Space Engine)
+# ============================================
+with st.container():
+    st.header("GEN-3 Adaptive State‑Space Model")
+
+    iterations_g3 = st.slider("Iterations (GEN-3)", 50_000, 500_000, 150_000, step=50_000, key="iter_gen3")
+
+    def mc_markov_adaptive(n_iter, seed=123):
+        rng = np.random.default_rng(seed)
+
+        # Base probabilities
+        p_up = 0.52
+        shock_prob = 0.05
+
+        value = 1.0
+        shocks = 0
+
+        for i in range(n_iter):
+            # Adapt p_up based on recent volatility (synthetic mini‑state memory)
+            if i > 1000:
+                local_vol = abs(np.sin(i / 2000))
+                p_up = 0.52 - local_vol * 0.1    # micro‑fluctuation adaptation
+                shock_prob = 0.05 + local_vol * 0.02
+
+            move = rng.random()
+            if move < p_up:
+                value *= 1.01
+            else:
+                value *= 0.99
+
+            # shocks
+            if rng.random() < shock_prob:
+                value *= 0.80
+                shocks += 1
+
+        return value, shocks / n_iter
+
+    if st.button("Run GEN-3 Model"):
+        start = time.time()
+        exp_val, shock_freq = mc_markov_adaptive(iterations_g3)
+        end = time.time()
+
+        st.session_state["GEN3"] = {
+            "engine": "GEN-3 (Adaptive State-Space)",
+            "iterations": iterations_g3,
+            "response_time_ms": (end - start) * 1000,
+            "expected_value": exp_val,
+            "shock_frequency": shock_freq,
+        }
+
+    if "GEN3" in st.session_state:
+        g3 = st.session_state["GEN3"]
+        st.metric("Response Time (ms)", f"{g3['response_time_ms']:.2f}")
+        st.metric("Expected Value", f"{g3['expected_value']:.4f}")
+        st.metric("Shock Frequency", f"{g3['shock_frequency']:.4f}")
+
+# ============================================
+# GEN-4 BLOCK (AI-Narrated Auditor Insight)
+# ============================================
+with st.container():
+    st.header("GEN-4 AI Narrated Insight Engine")
+
+    def ai_narrator(engine_output):
+        rt = engine_output["response_time_ms"]
+        ev = engine_output["expected_value"]
+        sf = engine_output["shock_frequency"]
+
+        # Generate dynamic narrative
+        narrative = []
+
+        narrative.append(f"Engine Type: **{engine_output['engine']}**")
+
+        # Latency story
+        if rt < 200:
+            narrative.append("The system is performing efficiently with low latency.")
+        elif rt < 400:
+            narrative.append("Latency is moderate, suggesting increasing computational load.")
+        else:
+            narrative.append("High latency detected — scenario complexity likely increased.")
+
+        # Expected value story
+        if ev > 1.0:
+            narrative.append("Expected value indicates upward economic resilience.")
+        elif ev > 0.5:
+            narrative.append("Expected value is stable, showing balanced positive/negative signals.")
+        else:
+            narrative.append("Expected value is low — underlying stress patterns are visible.")
+
+        # Shock narrative
+        if sf < 0.08:
+            narrative.append("Shock frequency is low, meaning external disruptions are minimal.")
+        elif sf < 0.15:
+            narrative.append("Shock levels are rising — a volatile environment may be forming.")
+        else:
+            narrative.append("High shock frequency — external instability shaping the system.")
+
+        return "\n".join(narrative)
+
+    # Pick latest engine run
+    latest_engine = None
+    for key in ["GEN3", "GEN2", "GEN1"]:
+        if key in st.session_state:
+            latest_engine = st.session_state[key]
+            break
+
+    if latest_engine:
+        st.subheader("Narrated Interpretation")
+        st.markdown(ai_narrator(latest_engine))
+    else:
+        st.info("Run any model (GEN‑1, GEN‑2, GEN‑3) to generate AI narrative.")
+
+# ============================================
+# GEN-5 BLOCK (Multi-Agent Interaction Model)
+# ============================================
+with st.container():
+    st.header("GEN-5 Multi-Agent Interaction Model")
+
+    iterations_g5 = st.slider("Iterations (GEN-5)", 20_000, 200_000, 50_000, step=20_000, key="iter_gen5")
+
+    def mc_multi_agent(n_iter, agents=3, seed=777):
+        rng = np.random.default_rng(seed)
+
+        # Initialize agent states
+        states = np.ones(agents)
+        shocks = 0
+
+        for _ in range(n_iter):
+            # random interaction weights
+            interaction = rng.random((agents, agents))
+            interaction = interaction / interaction.sum(axis=1, keepdims=True)
+
+            # environment shock
+            shock_env = rng.random() < 0.04
+
+            for a in range(agents):
+                influence = np.dot(interaction[a], states)
+                if influence > 1.0:
+                    states[a] *= 1.01
+                else:
+                    states[a] *= 0.99
+
+                if shock_env and rng.random() < 0.2:
+                    states[a] *= 0.85
+                    shocks += 1
+
+        final_value = float(states.mean())
+        shock_freq = shocks / (n_iter * agents)
+        return final_value, shock_freq
+
+    if st.button("Run GEN-5 Model"):
+        start = time.time()
+        exp_val, shock_freq = mc_multi_agent(iterations_g5)
+        end = time.time()
+
+        st.session_state["GEN5"] = {
+            "engine": "GEN-5 (Multi-Agent Interaction)",
+            "iterations": iterations_g5,
+            "response_time_ms": (end - start) * 1000,
+            "expected_value": exp_val,
+            "shock_frequency": shock_freq,
+        }
+
+    if "GEN5" in st.session_state:
+        g5 = st.session_state["GEN5"]
+        st.metric("Response Time (ms)", f"{g5['response_time_ms']:.2f}")
+        st.metric("Expected Value", f"{g5['expected_value']:.4f}")
+        st.metric("Shock Frequency", f"{g5['shock_frequency']:.4f}")
+
+
+# ============================================
+# GEN-6 BLOCK (Q-Learning Policy Engine)
+# ============================================
+with st.container():
+    st.header("GEN-6 Q-Learning Policy Engine")
+
+    iterations_g6 = st.slider("Iterations (GEN-6)", 10_000, 100_000, 30_000, step=10_000, key="iter_gen6")
+
+    def q_learning_policy(n_iter, seed=2025):
+        rng = np.random.default_rng(seed)
+
+        # States: 0 = bad, 1 = neutral, 2 = good
+        Q = np.zeros((3, 2))  # actions: 0 (conserve), 1 (expand)
+        state = 1
+        shocks = 0
+
+        alpha = 0.1
+        gamma = 0.9
+
+        for _ in range(n_iter):
+            action = rng.integers(0, 2)
+            reward = 0
+
+            # stochastic transition
+            p = rng.random()
+            if p < 0.3:
+                next_state = 0
+            elif p < 0.7:
+                next_state = 1
+            else:
+                next_state = 2
+
+            # reward logic
+            if action == 1 and next_state == 2:
+                reward = 1.0
+            elif action == 1 and next_state == 0:
+                reward = -1.0
+            elif action == 0:
+                reward = 0.05
+
+            # shock event
+            if rng.random() < 0.05:
+                reward -= 0.5
+                shocks += 1
+
+            # Q-update
+            best_next = np.max(Q[next_state])
+            Q[state, action] = Q[state, action] + alpha * (reward + gamma * best_next - Q[state, action])
+
+            state = next_state
+
+        expected_value = float(np.mean(Q))
+        shock_freq = shocks / n_iter
+        return expected_value, shock_freq
+
+    if st.button("Run GEN-6 Model"):
+        start = time.time()
+        exp_val, shock_freq = q_learning_policy(iterations_g6)
+        end = time.time()
+
+        st.session_state["GEN6"] = {
+            "engine": "GEN-6 (Q-Learning Policy)",
+            "iterations": iterations_g6,
+            "response_time_ms": (end - start) * 1000,
+            "expected_value": exp_val,
+            "shock_frequency": shock_freq,
+        }
+
+    if "GEN6" in st.session_state:
+        g6 = st.session_state["GEN6"]
+        st.metric("Response Time (ms)", f"{g6['response_time_ms']:.2f}")
+        st.metric("Expected Value", f"{g6['expected_value']:.4f}")
+        st.metric("Shock Frequency", f"{g6['shock_frequency']:.4f}")
+
 # ---------------------------------------------------------
 # SELF-AUDITOR SECTION
 # ---------------------------------------------------------
