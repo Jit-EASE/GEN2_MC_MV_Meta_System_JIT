@@ -62,7 +62,7 @@ with st.sidebar:
 # ---------------------------------------------------------
 # HEADER
 # ---------------------------------------------------------
-st.title("Agri‑Food Policy Intelligence Suite")
+st.title("Agentic Systems-of-Systems Auditor — Irish Agri-Food Decision & Policy Intelligence")
 st.caption(
     "Self‑Learning Policy Engines for Ireland’s Agri‑Food Sector — "
     "Performance, Stress Audit, and EU‑Aligned Governance."
