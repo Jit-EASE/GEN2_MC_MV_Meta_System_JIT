@@ -763,7 +763,7 @@ with tab_governance:
         "for policy‑realistic modelling of agri‑food markets."
     )
 
-    st.markdown("### EU‑Style Governance Note")
+    st.markdown("### EU Governance Statement")
     st.write(
         "This prototype follows an EU‑style approach to AI governance: combining "
         "quantitative stress‑testing (MC + Markov), explainable narratives, and "
