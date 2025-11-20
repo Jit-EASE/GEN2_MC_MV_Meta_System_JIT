@@ -367,21 +367,21 @@ def generate_policy_narrative(result_dict: dict, engine_label: str, scenario_lab
 
     # Optional: real OpenAI call (wrapped safely)
     try:
-    client = OpenAI(api_key=api_key)
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "You are a senior agri-food policy advisor for Ireland."},
-            {"role": "user", "content": base_prompt},
-        ],
+        client = OpenAI(api_key=api_key)
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a senior agri-food policy advisor for Ireland."},
+                {"role": "user", "content": base_prompt},
+            ],
         max_tokens=300,
         temperature=0.4,
     )
-    return response.choices[0].message["content"]
 
         return response.choices[0].message["content"]
+
     except Exception:
-        # Fallback if anything fails
         return (
             "AI policy interpretation unavailable (OpenAI API not configured). "
             "Use the quantitative metrics above as the primary decision support, "
