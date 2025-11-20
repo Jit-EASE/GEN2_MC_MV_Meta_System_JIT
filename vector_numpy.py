@@ -71,7 +71,7 @@ st.caption(
 # ---------------------------------------------------------
 # LOAD REAL DATA (RELATIVE PATH FOR GITHUB/STREAMLIT)
 # ---------------------------------------------------------
-DATA_PATH = "/Users/jit/Desktop/ie_copernicus_agri_econ_panel_2016_2024.csv"
+DATA_PATH = "ie_copernicus_agri_econ_panel_2016_2024.csv"
 
 try:
     data = pd.read_csv(DATA_PATH)
