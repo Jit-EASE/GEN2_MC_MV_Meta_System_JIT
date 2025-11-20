@@ -10,10 +10,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 # Optional OpenAI import for agentic interpretation layer
-try:
-    import openai
-except ImportError:
-    openai = None
+from openai import OpenAI
 
 # ---------------------------------------------------------
 # PAGE CONFIG
