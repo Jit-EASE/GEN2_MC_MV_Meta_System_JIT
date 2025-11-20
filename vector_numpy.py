@@ -232,7 +232,7 @@ def mc_multi_agent(n_iter: int, agents: int = 3, seed: int = 777):
 # ---------------------------------------------------------
 def q_learning_policy(n_iter: int, seed: int = 2025):
     """
-    Reinforcement Policy Optimiser for Agri‑Food
+    Semi-Autonomous Policy Optimiser for Agri‑Food
     Q‑learning policy engine exploring conserve/expand actions under shocks.
     """
     rng = np.random.default_rng(seed)
