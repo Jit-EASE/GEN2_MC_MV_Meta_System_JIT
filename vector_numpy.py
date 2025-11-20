@@ -708,7 +708,7 @@ with tab_indicators:
 # TAB 3 — GOVERNANCE & AUDITOR
 # =========================================================
 with tab_governance:
-    st.subheader("🛡️ Governance, Risk & Self‑Auditor Panel")
+    st.subheader("Governance, Risk & Self‑Auditor Panel")
 
     # Choose latest run across all engines
     latest_run = None
