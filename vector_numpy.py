@@ -29,7 +29,8 @@ with st.sidebar:
     st.markdown(
         "### Self‑Learning Policy Engines\n"
         "Performance & Stress Audit System (Quality Control)\n"
-        "***##System Architecture, Design and Engineering - Shubhojit Bagchi © 2025##***"
+        "\n"
+        "***System Architecture, Design and Engineering - Shubhojit Bagchi © 2025***"
     )
 
     st.subheader("Scenario Generator")
