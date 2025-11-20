@@ -574,7 +574,7 @@ with tab_engines:
 
     # ---------------- GEN‑6: RPO‑Agri ----------------
     st.markdown(
-        "### Reinforcement Policy Optimiser for Agri‑Food (RPO‑Agri)"
+        "### Semi Autonomous Policy Optimiser for Agri‑Food (RPO‑Agri)"
     )
     iterations_g6 = st.slider(
         "Iterations (GEN‑6)", 10_000, 100_000, 30_000, step=10_000, key="iter_gen6"
