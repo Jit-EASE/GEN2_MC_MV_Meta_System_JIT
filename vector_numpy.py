@@ -11,7 +11,6 @@ import streamlit as st
 
 # Optional OpenAI import for agentic interpretation layer
 from openai import OpenAI
-st.write("API KEY EXISTS:", bool(os.getenv("OPENAI_API_KEY")))
 
 # ---------------------------------------------------------
 # PAGE CONFIG
@@ -25,7 +24,7 @@ st.set_page_config(
 # SIDEBAR — POLICY & GOVERNANCE PANEL
 # ---------------------------------------------------------
 with st.sidebar:
-    st.title("📘 Policy Control Panel")
+    st.title("Policy Control Panel")
 
     st.markdown(
         "### Self‑Learning Policy Engines\n"
@@ -45,7 +44,7 @@ with st.sidebar:
         ],
     )
 
-    st.subheader("🇪🇺 EU Governance & Compliance")
+    st.subheader("EU Governance & Compliance")
     st.markdown("**EU AI Act & CAP 2023–2027 Alignment (High‑Level Check)**")
 
     st.checkbox("Transparency & Documentation in place", value=True)
@@ -63,7 +62,7 @@ with st.sidebar:
 # ---------------------------------------------------------
 # HEADER
 # ---------------------------------------------------------
-st.title("🌾 Agri‑Food Policy Intelligence Suite")
+st.title("Agri‑Food Policy Intelligence Suite")
 st.caption(
     "Self‑Learning Policy Engines for Ireland’s Agri‑Food Sector — "
     "Performance, Stress Audit, and EU‑Aligned Governance."
@@ -72,11 +71,11 @@ st.caption(
 # ---------------------------------------------------------
 # LOAD REAL DATA (RELATIVE PATH FOR GITHUB/STREAMLIT)
 # ---------------------------------------------------------
-DATA_PATH = "ie_copernicus_agri_econ_panel_2016_2024.csv"
+DATA_PATH = "/Users/jit/Desktop/ie_copernicus_agri_econ_panel_2016_2024.csv"
 
 try:
     data = pd.read_csv(DATA_PATH)
-    st.subheader("📊 Real Data: Copernicus‑Aligned Agri‑Econ Panel (2016–2024)")
+    st.subheader("Real Data: Copernicus‑Aligned Agri‑Econ Panel (2016–2024)")
     st.dataframe(data.head(), use_container_width=True)
 except Exception as e:
     st.warning(f"Could not load dataset from '{DATA_PATH}': {e}")
@@ -137,7 +136,7 @@ def mc_markov_vectorized(
     seed: int = 42,
 ):
     """
-    GEN‑2: Rapid Agri‑Shock Vectorized Response Engine (RASVRE)
+    Rapid Agri‑Shock Vectorized Response Engine
     Vectorized Monte‑Carlo + Markov engine (NumPy) — cloud‑safe and fast.
     """
     rng = np.random.default_rng(seed)
@@ -162,7 +161,7 @@ def mc_markov_vectorized(
 # ---------------------------------------------------------
 def mc_markov_adaptive(n_iter: int, seed: int = 123):
     """
-    GEN‑3: Adaptive Farm‑Sector State Transition Model (AF‑STEM)
+    Adaptive Farm‑Sector State Transition Model
     Adapts transition probabilities based on synthetic volatility patterns.
     """
     rng = np.random.default_rng(seed)
@@ -196,7 +195,7 @@ def mc_markov_adaptive(n_iter: int, seed: int = 123):
 # ---------------------------------------------------------
 def mc_multi_agent(n_iter: int, agents: int = 3, seed: int = 777):
     """
-    GEN‑5: Multi‑Agent Farm‑Processor Interaction Simulator (MAFPIS)
+    Multi‑Agent Farm‑Processor Interaction Simulator
     Simulates interactions between farms, co‑ops, and processors.
     """
     rng = np.random.default_rng(seed)
@@ -231,7 +230,7 @@ def mc_multi_agent(n_iter: int, agents: int = 3, seed: int = 777):
 # ---------------------------------------------------------
 def q_learning_policy(n_iter: int, seed: int = 2025):
     """
-    GEN‑6: Reinforcement Policy Optimiser for Agri‑Food (RPO‑Agri)
+    Reinforcement Policy Optimiser for Agri‑Food
     Q‑learning policy engine exploring conserve/expand actions under shocks.
     """
     rng = np.random.default_rng(seed)
@@ -334,12 +333,16 @@ def self_auditor_check(result_dict: dict):
 # ---------------------------------------------------------
 def generate_policy_narrative(result_dict: dict, engine_label: str, scenario_label: str):
     """
-    If OpenAI + API key are available, call GPT‑4o‑mini style agent.
+    If OpenAI + API key are available, call GPT-4o-mini style agent.
     Otherwise, provide a deterministic fallback narrative.
     """
+
+    # --- Load API Key safely ---
     api_key = os.getenv("OPENAI_API_KEY", "").strip()
+
+    # --- Base prompt ---
     base_prompt = (
-        f"You are an Irish agri‑food policy advisor. "
+        f"You are an Irish agri-food policy advisor. "
         f"Engine: {engine_label}. Scenario: {scenario_label}. "
         f"Metrics: expected value={result_dict['expected_value']:.4f}, "
         f"shock frequency={result_dict['shock_frequency']:.4f}, "
@@ -349,44 +352,50 @@ def generate_policy_narrative(result_dict: dict, engine_label: str, scenario_lab
         "Conclude with ONE concrete policy suggestion."
     )
 
+    # --- Fallback if no API key ---
     if not api_key:
-        # Fallback narrative — no external call
-        lines = [
-            f"Engine **{engine_label}** under **{scenario_label}** indicates a "
-            f"simulated expected outcome of {result_dict['expected_value']:.4f} "
-            f"with a shock frequency of {result_dict['shock_frequency']:.4f}.",
-            "The system is operating within a controlled experimental environment "
-            "using Monte‑Carlo and Markov‑style transitions.",
-            "Results suggest that agri‑markets remain sensitive to external shocks, "
-            "especially under climate and price volatility scenarios.",
-            "From a governance perspective, this run provides an early‑warning signal "
-            "rather than a confirmed crisis.",
-            "Policy suggestion: strengthen targeted income‑stabilisation tools and "
-            "scenario‑based advisory support for vulnerable farm types.",
+        fallback = [
+            f"Engine **{engine_label}** under **{scenario_label}** reports an "
+            f"expected performance of {result_dict['expected_value']:.4f} "
+            f"with a shock exposure rate of {result_dict['shock_frequency']:.4f}.",
+            "This outcome reflects Monte-Carlo and Markov-driven dynamics within a "
+            "controlled agri-economic stress-testing framework.",
+            "Volatility signals remain relevant for policy development, particularly "
+            "under adverse climate or price scenarios.",
+            "This result should be treated as an early-warning diagnostic rather than "
+            "a conclusive market signal.",
+            "Policy suggestion: enhance targeted income-stabilisation supports for "
+            "vulnerable farm categories.",
         ]
-        return "\n\n".join(lines)
+        return "\n\n".join(fallback)
 
-    # Optional: real OpenAI call (wrapped safely)
+    # --- Try calling OpenAI (fully correct indentation) ---
     try:
         client = OpenAI(api_key=api_key)
 
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a senior agri-food policy advisor for Ireland."},
-                {"role": "user", "content": base_prompt},
+                {
+                    "role": "system",
+                    "content": "You are a senior agri-food policy advisor for Ireland."
+                },
+                {
+                    "role": "user",
+                    "content": base_prompt
+                },
             ],
-        max_tokens=300,
-        temperature=0.4,
-    )
+            max_tokens=300,
+            temperature=0.4,
+        )
 
         return response.choices[0].message["content"]
 
-    except Exception:
+    except Exception as e:
         return (
-            "AI policy interpretation unavailable (OpenAI API not configured). "
-            "Use the quantitative metrics above as the primary decision support, "
-            "and interpret them within your policy context."
+            f"⚠️ OpenAI call failed: {e}\n\n"
+            "Use the quantitative metrics above as the primary guidance until "
+            "the AI interpretation layer is restored."
         )
 
 
@@ -421,13 +430,13 @@ tab_engines, tab_indicators, tab_governance = st.tabs(
 # TAB 1 — POLICY ENGINES DASHBOARD
 # =========================================================
 with tab_engines:
-    st.subheader("🧠 Self‑Learning Policy Engines — Agri‑Food Context")
+    st.subheader("Self‑Learning Policy Engines — Irish Agri-Food Sector")
 
     col1, col2 = st.columns(2)
 
     # ---------------- GEN‑1: BAMSE ----------------
     with col1:
-        st.markdown("### GEN‑1 Baseline Agri‑Market Stability Engine (BAMSE)")
+        st.markdown("### Baseline Agri‑Market Stability Engine ")
         iterations_g1 = st.slider(
             "Iterations (GEN‑1)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen1"
         )
@@ -459,7 +468,7 @@ with tab_engines:
     # ---------------- GEN‑2: RASVRE ----------------
     with col2:
         st.markdown(
-            "### GEN‑2 Rapid Agri‑Shock Vectorized Response Engine (RASVRE)"
+            "### Rapid Agri‑Shock Vectorized Response Engine (RASVRE)"
         )
         iterations_g2 = st.slider(
             "Iterations (GEN‑2)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen2"
@@ -498,7 +507,7 @@ with tab_engines:
     st.markdown("---")
 
     # ---------------- GEN‑3: AF‑STEM ----------------
-    st.markdown("### GEN‑3 Adaptive Farm‑Sector State Transition Model (AF‑STEM)")
+    st.markdown("### Adaptive Farm‑Sector State Transition Model (AF‑STEM)")
     iterations_g3 = st.slider(
         "Iterations (GEN‑3)", 50_000, 500_000, 150_000, step=50_000, key="iter_gen3"
     )
@@ -530,7 +539,7 @@ with tab_engines:
 
     # ---------------- GEN‑5: MAFPIS ----------------
     st.markdown(
-        "### GEN‑5 Multi‑Agent Farm‑Processor Interaction Simulator (MAFPIS)"
+        "### Multi‑Agent Farm‑Processor Interaction Simulator (MAFPIS)"
     )
     iterations_g5 = st.slider(
         "Iterations (GEN‑5)", 20_000, 200_000, 50_000, step=20_000, key="iter_gen5"
@@ -563,7 +572,7 @@ with tab_engines:
 
     # ---------------- GEN‑6: RPO‑Agri ----------------
     st.markdown(
-        "### GEN‑6 Reinforcement Policy Optimiser for Agri‑Food (RPO‑Agri)"
+        "### Reinforcement Policy Optimiser for Agri‑Food (RPO‑Agri)"
     )
     iterations_g6 = st.slider(
         "Iterations (GEN‑6)", 10_000, 100_000, 30_000, step=10_000, key="iter_gen6"
@@ -597,7 +606,7 @@ with tab_engines:
 # TAB 2 — INDICATORS & PLOTLY VISUALS
 # =========================================================
 with tab_indicators:
-    st.subheader("📈 Engine Performance & Shock Indicators")
+    st.subheader("Engine Performance & Shock Indicators")
 
     history = st.session_state["run_history"]
     if not history:
@@ -727,7 +736,7 @@ with tab_governance:
         # AGENTIC OPENAI POLICY INTERPRETATION LAYER
         # ---------------------------------------------------------
         st.markdown("---")
-        st.subheader("🤖 Agentic Policy Intelligence Advisor")
+        st.subheader("Agentic Policy Intelligence Advisor")
 
         agentic_narrative = generate_policy_narrative(
             latest_run,
@@ -747,7 +756,7 @@ with tab_governance:
         st.write(agentic_narrative)
 
     st.markdown("---")
-    st.subheader("📑 Active Scenario Metadata")
+    st.subheader("Active Scenario Metadata")
     st.write(f"**Active Scenario:** {scenario}")
     st.write(
         "Scenario parameters are integrated into BAMSE and RASVRE engines "
