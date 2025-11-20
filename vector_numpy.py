@@ -75,7 +75,7 @@ DATA_PATH = "ie_copernicus_agri_econ_panel_2016_2024.csv"
 
 try:
     data = pd.read_csv(DATA_PATH)
-    st.subheader("Dataset Source: Copernicus, Eurostat, CSO, NOAA")
+    st.subheader("Dataset Source: Copernicus - Earth Observation, Eurostat, CSO, NOAA")
     st.dataframe(data.head(), use_container_width=True)
 except Exception as e:
     st.warning(f"Could not load dataset from '{DATA_PATH}': {e}")
