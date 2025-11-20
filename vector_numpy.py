@@ -436,7 +436,7 @@ with tab_engines:
 
     # ---------------- GEN‑1: BAMSE ----------------
     with col1:
-        st.markdown("### Baseline Agri‑Market Stability Engine ")
+        st.markdown("### Baseline Agri‑Market Stability Engine (BAMSE) ")
         iterations_g1 = st.slider(
             "Iterations (GEN‑1)", 50_000, 500_000, 200_000, step=50_000, key="iter_gen1"
         )
