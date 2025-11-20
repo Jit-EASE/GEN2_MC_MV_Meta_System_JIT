@@ -11,6 +11,7 @@ import streamlit as st
 
 # Optional OpenAI import for agentic interpretation layer
 from openai import OpenAI
+st.write("API KEY EXISTS:", bool(os.getenv("OPENAI_API_KEY")))
 
 # ---------------------------------------------------------
 # PAGE CONFIG
