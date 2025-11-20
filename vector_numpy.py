@@ -71,7 +71,7 @@ st.caption(
 # ---------------------------------------------------------
 # LOAD REAL DATA (RELATIVE PATH FOR GITHUB/STREAMLIT)
 # ---------------------------------------------------------
-DATA_PATH = "ie_copernicus_agri_econ_panel_2016_2024.csv"
+DATA_PATH = "/Users/jit/Desktop/ie_copernicus_agri_econ_panel_2016_2024.csv"
 
 try:
     data = pd.read_csv(DATA_PATH)
@@ -389,7 +389,7 @@ def generate_policy_narrative(result_dict: dict, engine_label: str, scenario_lab
             temperature=0.4,
         )
 
-        return response.choices[0].message["content"]
+        return response.choices[0].message.content
 
     except Exception as e:
         return (
